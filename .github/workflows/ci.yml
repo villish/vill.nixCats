@@ -1,0 +1,72 @@
+# name: CI
+
+# on:
+#   push:
+#     branches: [main, master]
+#   pull_request:
+#     branches: [main, master]
+#   workflow_dispatch:
+
+# jobs:
+#   build-packages:
+#     name: Build Packages
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, macos-latest]
+#         package: [nvim]
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Check Nix Flake
+#         uses: DeterminateSystems/flake-checker-action@v10
+
+#       - name: Install Nix
+#         uses: cachix/install-nix-action@v24
+#         with:
+#           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+#       - name: Setup Cachix
+#         uses: cachix/cachix-action@v12
+#         with:
+#           name: villerz
+#           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+#       - name: Build ${{ matrix.package }}
+#         run: nix build .#${{ matrix.package }}
+
+#       - name: Test ${{ matrix.package }} --version
+#         run: ./result/bin/${{ matrix.package }} --version
+
+#   lua-formatting:
+#     name: Check Lua Formatting
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Install Nix
+#         uses: cachix/install-nix-action@v24
+#         with:
+#           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+#       - name: Check Lua formatting
+#         run: |
+#           nix run nixpkgs#stylua -- --check .
+
+#   nix-formatting:
+#     name: Check Nix Formatting
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Install Nix
+#         uses: cachix/install-nix-action@v24
+#         with:
+#           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+#       - name: Check Nix formatting
+#         run: |
+#           nix run nixpkgs#nixfmt-classic -- --check flake.nix

@@ -1,0 +1,59 @@
+return {
+  --   {
+  --     'smart-splits.nvim',
+  --     dir = nixCats.pawsible.allPlugins.start['smart-splits.nvim'],
+  --     lazy = false,
+  --     opts = {
+  --       ignored_buftypes = {
+  --         'nofile',
+  --         'quickfix',
+  --         'prompt',
+  --       },
+  --       -- Ignored filetypes (only while resizing)
+  --       ignored_filetypes = { 'NvimTree', 'neo-tree' },
+  --       -- the default number of lines/columns to resize by at a time
+  --       default_amount = 3,
+  --       -- Desired behavior when your cursor is at an edge and you
+  --       -- are moving towards that same edge:
+  --       -- 'wrap' => Wrap to opposite side
+  --       -- 'split' => Create a new split in the desired direction
+  --       -- 'stop' => Do nothing
+  --       at_edge = 'wrap',
+  --       -- Desired behavior when the current window is floating:
+  --       -- 'previous' => Focus previous Vim window and perform action
+  --       -- 'mux' => Always forward action to multiplexer
+  --       float_win_behavior = 'previous',
+  --       -- when moving cursor between splits left or right,
+  --       -- place the cursor on the same row of the *screen*
+  --       -- regardless of line numbers. False by default.
+  --       move_cursor_same_row = false,
+  --       -- whether the cursor should follow the buffer when swapping
+  --       -- buffers by default
+  --       cursor_follows_swapped_bufs = false,
+  --       -- ignore these autocmd events while processing
+  --       ignored_events = {
+  --         'BufEnter',
+  --         'WinEnter',
+  --       },
+  --       -- enable or disable a multiplexer integration;
+  --       -- automatically determined by checking $TERM_PROGRAM
+  --       multiplexer_integration = nil,
+  --       -- disable multiplexer navigation if current multiplexer pane is zoomed
+  --       disable_multiplexer_nav_when_zoomed = true,
+  --       -- default logging level
+  --       log_level = 'info',
+  --     },
+  --     config = function(_, opts)
+  --       require('smart-splits').setup(opts)
+  --
+  --       -- Resizing splits with Shift+Alt+hjkl (only keep resize functionality)
+  --       vim.keymap.set('n', '<S-A-h>', require('smart-splits').resize_left, { desc = 'Resize split left' })
+  --       vim.keymap.set('n', '<S-A-j>', require('smart-splits').resize_down, { desc = 'Resize split down' })
+  --       vim.keymap.set('n', '<S-A-k>', require('smart-splits').resize_up, { desc = 'Resize split up' })
+  --       vim.keymap.set('n', '<S-A-l>', require('smart-splits').resize_right, { desc = 'Resize split right' })
+  --
+  --       -- Navigation is now handled by vim-tmux-navigator plugin
+  --       -- Removed conflicting M-h/j/k/l keybindings
+  --     end,
+  --   },
+}
