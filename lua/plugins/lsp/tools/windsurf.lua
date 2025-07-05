@@ -16,7 +16,7 @@ return {
       end
 
       return {
-        enable_cmp_source = vim.g.ai_cmp,
+        enable_cmp_source = true,
         virtual_text = {
           enabled = true,
           key_bindings = {

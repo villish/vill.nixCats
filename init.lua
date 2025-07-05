@@ -46,7 +46,14 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
     },
   },
   -- import/override with your plugins
-  { import = 'plugins' },
+  { import = 'plugins.ui' },
+  { import = 'plugins.text' },
+  { import = 'plugins.nav' },
+  { import = 'plugins.lsp' },
+  { import = 'plugins.lsp.cpp.clangd' },
+  { import = 'plugins.lsp.nix.nixd' },
+  { import = 'plugins.lsp.rust.rustaceanvim' },
+  { import = 'plugins.lsp.tools' },
 }, lazyOptions)
 
 vim.api.nvim_create_autocmd('VimEnter', {

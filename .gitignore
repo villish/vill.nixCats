@@ -25,3 +25,7 @@ Thumbs.db
 
 #txt files
 #*.txt
+
+# Gemini memory file
+GEMINI.md
+docs/

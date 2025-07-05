@@ -16,15 +16,6 @@ return {
     opts = {
       sources = {
         compat = { 'codeium' },
-        providers = {
-          codeium = {
-            name = 'codeium',
-            module = 'blink.compat.source',
-            kind = 'Codeium',
-            score_offset = 100,
-            async = true,
-          },
-        },
       },
     },
     config = function(_, opts)
