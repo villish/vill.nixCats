@@ -1,0 +1,193 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  build-and-release:
+    name: Build and Create Release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        package: [nvim-portable]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v12
+        with:
+          name: villerz
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Build ${{ matrix.package }}
+        run: |
+          echo "Building portable package: ${{ matrix.package }} on ${{ matrix.os }}"
+          nix build .#${{ matrix.package }} --print-build-logs
+          echo "Build completed successfully"
+
+      - name: Validate build output
+        run: |
+          if [ ! -L result ]; then
+            echo "Error: result symlink not found!"
+            exit 1
+          fi
+
+          if [ ! -f result/bin/nvim-portable ]; then
+            echo "Error: nvim-portable executable not found in result/bin/"
+            exit 1
+          fi
+
+          echo "Testing nvim-portable executable:"
+          result/bin/nvim-portable --version || true
+
+          echo "Validation completed successfully"
+
+      - name: Create portable release package
+        run: |
+          echo "Creating portable release package for ${{ matrix.package }} on ${{ matrix.os }}..."
+
+          mkdir -p nixcats-portable
+
+          cp -r result/* nixcats-portable/
+          chmod -R u+w nixcats-portable/
+
+          cp nixcats-portable/bin/nvim-portable nixcats-portable/bin/nvim
+
+          if [ -f nixcats-portable/bin/nvim-portable-python3 ]; then
+            cp nixcats-portable/bin/nvim-portable-python3 nixcats-portable/bin/nvim-python3
+          fi
+
+          if [ -L nixcats-portable/bin/nvim-portable-node ]; then
+            target=$(readlink nixcats-portable/bin/nvim-portable-node)
+            if [ -f "$target" ]; then
+              cp "$target" nixcats-portable/bin/nvim-node
+            else
+              echo "Warning: nvim-portable-node symlink target not accessible, skipping..."
+            fi
+          fi
+
+          mkdir -p nixcats-portable/nvim-config
+          cp -r lua nixcats-portable/nvim-config/
+          cp init.lua nixcats-portable/nvim-config/
+
+          cat > nixcats-portable/nixcats << 'EOF'
+          #!/usr/bin/env bash
+          SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+          export NVIM_APPNAME="nixcats"
+          XDG_CONFIG_HOME="${SCRIPT_DIR}" exec "${SCRIPT_DIR}/bin/nvim" "$@"
+          EOF
+          chmod +x nixcats-portable/nixcats
+
+          cat > nixcats-portable/README.md << 'EOF'
+          # nixCats Portable Neovim
+
+          This is a portable nixCats Neovim package that can run without Nix installed.
+
+          ## Installation
+
+          1. Extract this archive wherever you want
+          2. Run `./nixcats` to launch Neovim
+          3. Or run `./bin/nvim` directly
+          4. Optionally, add the directory to your PATH or create symlinks
+
+          ## Configuration
+
+          The configuration is located in the `nvim-config/` directory and can be modified
+          as needed. The launcher script automatically sets the correct paths.
+
+          ## Usage Options
+
+          - `./nixcats` - Recommended launcher with proper config paths
+          - `./bin/nvim` - Direct executable (requires manual config setup)
+
+          EOF
+
+          find nixcats-portable -type f | head -20
+
+          tar -czf nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz nixcats-portable
+
+          echo "Tarball created. Contents preview:"
+          tar -tzf nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz | head -20
+
+          echo "Tarball size:"
+          ls -lh nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## nixCats Neovim Portable Release ${{ github.ref_name }}
+
+            This release contains **portable** nixCats Neovim packages that can run without Nix installed.
+
+            ### Downloads
+            - `nixcats-nvim-portable-ubuntu-latest.tar.gz` - Linux x86_64 portable build
+            - `nixcats-nvim-portable-macos-latest.tar.gz` - macOS portable build
+
+            ### Installation
+            1. Download the appropriate tarball for your platform
+            2. Extract: `tar -xzf nixcats-nvim-portable-*.tar.gz`
+            3. Run: `cd nixcats-portable && ./nixcats`
+
+            ### Key Features
+            - **No Nix store dependencies** - runs anywhere
+            - **Self-contained** - all dependencies included
+            - **Modifiable** - configuration can be edited after extraction
+            - **Portable** - just extract and run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-flake-lock:
+    name: Update flake.lock on release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v24
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update flake.lock
+        run: |
+          echo "Updating flake.lock..."
+          nix flake update
+          echo "Flake update completed"
+
+      - name: Commit and push updated flake.lock
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add flake.lock
+          if ! git diff --staged --quiet; then
+            echo "Committing updated flake.lock..."
+            git commit -m "Update flake.lock for release ${{ github.ref_name }}"
+            git push origin main
+            echo "Successfully pushed updated flake.lock"
+          else
+            echo "No changes to flake.lock"
+          fi
