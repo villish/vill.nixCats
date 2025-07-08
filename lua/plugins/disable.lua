@@ -5,6 +5,7 @@ return {
   },
   {
     'catppuccin',
+    dir = nixCats.pawsible.allPlugins.start['catppuccin'],
     enabled = false,
   },
 }

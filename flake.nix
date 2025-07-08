@@ -1,5 +1,3 @@
-# Copyright (c) 2023 BirdeeHub
-# Licensed under the MIT license
 {
   description = "A Lua-natic's neovim flake, with extra cats! nixCats!";
 
@@ -7,18 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
 
-    # neovim-nightly-overlay = {
-    #   url = "github:nix-community/neovim-nightly-overlay";
-    # };
-
     # see :help nixCats.flake.inputs
-    # If you want your plugin to be loaded by the standard overlay,
-    # i.e. if it wasnt on nixpkgs, but doesnt have an extra build step.
-    # Then you should name it "plugins-something"
-    # If you wish to define a custom build step not handled by nixpkgs,
-    # then you should name it in a different format, and deal with that in the
-    # overlay defined for custom builds in the overlays directory.
-    # for specific tags, branches and commits, see:
     # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake.html#examples
 
   };
@@ -29,20 +16,7 @@
       inherit (nixCats) utils;
       luaPath = ./.;
       forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-      # the following extra_pkg_config contains any values
-      # which you want to pass to the config set of nixpkgs
-      # import nixpkgs { config = extra_pkg_config; inherit system; }
-      # will not apply to module imports
-      # as that will have your system values
       extra_pkg_config = { allowUnfree = true; };
-      # management of the system variable is one of the harder parts of using flakes.
-
-      # so I have done it here in an interesting way to keep it out of the way.
-      # It gets resolved within the builder itself, and then passed to your
-      # categoryDefinitions and packageDefinitions.
-
-      # this allows you to use ${pkgs.system} whenever you want in those sections
-      # without fear.
 
       dependencyOverlays = # (import ./overlays inputs) ++
         [
@@ -73,7 +47,7 @@
 
           # lspsAndRuntimeDeps:
           # this section is for dependencies that should be available
-          # at RUN TIME for plugins. Will be available to PATH within neovim terminal
+          # at RUN TIME for plugins. Will be available to PATH within Neovim terminal
           # this includes LSPs
           lspsAndRuntimeDeps = with pkgs; {
             general = [
@@ -93,9 +67,11 @@
               stdenv.cc.cc
               lua-language-server
               nixd
-              nixfmt-classic # Nix formatter for nixd
+              nixfmt-classic
               stylua
-              clang-tools # Contains clangd C/C++ language server
+              clang-tools
+
+              ## markdown
               markdownlint-cli2
               marksman
 
@@ -103,14 +79,13 @@
               rust-analyzer
               cargo
               clippy
+              harper
             ];
           };
 
-          # NOTE: lazy doesnt care if these are in startupPlugins or optionalPlugins
-          # also you dont have to download everything via nix if you dont want.
-          # but you have the option, and that is demonstrated here.
           startupPlugins = with pkgs.vimPlugins; {
             general = [
+              outline-nvim
               yanky-nvim
               windsurf-nvim
               blink-compat
@@ -263,7 +238,7 @@
           extra = { };
         };
         # an extra test package with normal lua reload for fast edits
-        # nix doesnt provide the config in this package, allowing you free reign to edit it.
+        # nix doesnt provide the config in this package, allowing you free rein to edit it.
         # then you can swap back to the normal pure package when done.
         testnvim = { pkgs, mkPlugin, ... }: {
           settings = {

@@ -15,12 +15,15 @@ return {
 
     local keymap = {
       ['f'] = function()
+        ---@diagnostic disable-next-line: missing-fields
         hop.hint_char2 { current_line_only = true, jump_on_sole_occurrence = true }
       end,
       ['t'] = function()
+        ---@diagnostic disable-next-line: missing-fields
         hop.hint_char2 { current_line_only = true, jump_on_sole_occurrence = true, hint_offset = -1 }
       end,
       ['<CR>'] = function()
+        ---@diagnostic disable-next-line: missing-parameter
         hop.hint_words()
       end,
     }

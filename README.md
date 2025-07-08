@@ -2,7 +2,7 @@
 
 # nixCat
 
-Personal nvim config based on the nixCat lazyvim template.
+Personal Neovim configuration based on the nixCat LazyVim template.
 <!--toc:start-->
 
 - [nixCat](#nixcat-config)
@@ -29,7 +29,7 @@ So if you don't plan to use NixOS, you are fine to enable mason and leave it lik
 
 ### 2. LSP and Completion Issues
 
-If LSPs and autocompletion do not work, verify the following:
+If LSPs and auto completion do not work, verify the following:
 
 - Run `:LspInfo` in Neovim to check if your LSP servers are detected and running.
 - Ensure that all required LSP servers are installed via Nix or Mason (if enabled).
@@ -42,7 +42,7 @@ If LSPs and autocompletion do not work, verify the following:
   { import = "lazyvim.plugins.extras.lang.tailwind" },
   ```
 
-- Or make sure to set the location of the json file to your `nixCats.settings.unwrappedCfgPath` so that it can find and edit it (pointing it to the store would prevent lazy from editing it while using its UI extras interface).
+- Or make sure to set the location of the Json file to your `nixCats.settings.unwrappedCfgPath` so that it can find and edit it (pointing it to the store would prevent lazy from editing it while using its UI extras interface).
 
 ### 3. LazyVim as a "Second-Class Citizen" in Nix
 
@@ -55,7 +55,7 @@ LazyVim also, obviously uses `lazy.nvim`. `lazy.nvim` technically works fine on 
 If you find LazyVim too cumbersome to use with Nix, consider alternative configurations:
 such as the one shown in the [example](../example) template using `lze`
 
-If you wish to keep using `lazy.nvim` creating your own config based on the [kickstart-nvim](../kickstart-nvim) template will work better as you will have more control over whether mason is used.
+If you wish to keep using `lazy.nvim` creating your own configuration based on the [kickstart-nvim](../kickstart-nvim) template will work better as you will have more control over whether mason is used.
 
 However, again, `lazy.nvim` is not recommended for use with other package managers, including nix.
 
