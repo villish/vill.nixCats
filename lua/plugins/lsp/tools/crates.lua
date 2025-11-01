@@ -9,9 +9,6 @@ return {
 
       crates.setup {
         completion = {
-          cmp = {
-            enabled = false,
-          },
           blink = {
             use_custom_kind = true,
             kind_text = {

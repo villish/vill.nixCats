@@ -23,17 +23,15 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
   { 'LazyVim/LazyVim', import = 'lazyvim.plugins' },
   -- disable mason.nvim while using nix
   -- precompiled binaries do not agree with nixos, and we can just make nix install this stuff for us.
-  { 'williamboman/mason-lspconfig.nvim', enabled = require('nixCatsUtils').lazyAdd(true, false) },
-  { 'williamboman/mason.nvim', enabled = require('nixCatsUtils').lazyAdd(true, false) },
+  { 'mason-org/mason-lspconfig.nvim', enabled = require('nixCatsUtils').lazyAdd(true, false) },
+  { 'mason-org/mason.nvim', enabled = require('nixCatsUtils').lazyAdd(true, false) },
   { import = 'lazyvim.plugins.extras.lang.markdown' },
   {
     'nvim-treesitter/nvim-treesitter',
-    build = require('nixCatsUtils').lazyAdd ':TSUpdate',
-    opts_extend = require('nixCatsUtils').lazyAdd(nil, false),
+    build = require('nixCatsUtils').lazyAdd(':TSUpdate', false),
+    pin = require('nixCatsUtils').lazyAdd(false, true),
     opts = {
-      -- nix already ensured they were installed, and we would need to change the parser_install_dir if we wanted to use it instead.
-      -- so we just disable install and do it via nix.
-      ensure_installed = require('nixCatsUtils').lazyAdd({ 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' }, false),
+      ensure_installed = require('nixCatsUtils').lazyAdd({ 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' }, {}),
       auto_install = require('nixCatsUtils').lazyAdd(true, false),
     },
   },
