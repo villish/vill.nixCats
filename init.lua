@@ -46,6 +46,7 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
   -- import/override with your plugins
   { import = 'plugins.ui' },
   { import = 'plugins.text' },
+  { import = 'plugins.treesitter' },
   { import = 'plugins.nav' },
   { import = 'plugins.lsp' },
   { import = 'plugins.lsp.cpp.clangd' },
