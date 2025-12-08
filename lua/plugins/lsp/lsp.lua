@@ -5,6 +5,16 @@ return {
   opts = {
     servers = {
       nil_ls = false,
+      -- Global capabilities for all servers
+      ['*'] = {
+        capabilities = {
+          textDocument = {
+            inlayHint = {
+              dynamicRegistration = false,
+            },
+          },
+        },
+      },
     },
   },
 }

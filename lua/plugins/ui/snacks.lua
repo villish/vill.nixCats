@@ -3,6 +3,7 @@ return {
     'snacks.nvim',
     dir = nixCats.pawsible.allPlugins.start['snacks.nvim'],
     opts = {
+      -- Existing dashboard config
       dashboard = {
         preset = {
           header = [[
@@ -22,6 +23,7 @@ return {
           { section = 'startup' },
         },
       },
+      -- Existing picker config
       picker = {
         win = {
           input = {
@@ -36,6 +38,7 @@ return {
           },
         },
       },
+      -- Existing explorer config
       explorer = {
         win = {
           input = {
@@ -49,6 +52,54 @@ return {
             },
           },
         },
+      },
+      -- Add all missing Snacks components
+      input = { enabled = true },
+      scroll = {
+        enabled = true,
+        animate = {
+          duration = { step = 15, total = 250 },
+          easing = "linear",
+        },
+      },
+      indent = {
+        enabled = true,
+        char = "│",
+        only_scope = false,
+        only_current = false,
+        hl = "SnacksIndent",
+      },
+      scope = {
+        enabled = true,
+        char = "│",
+        underline = false,
+        hl = "SnacksScope",
+      },
+      dim = {
+        enabled = true,
+        scope = {
+          min_size = 5,
+          max_size = 20,
+          siblings = true,
+        },
+      },
+      zen = {
+        enabled = true,
+        toggles = {
+          dim = true,
+          git_signs = false,
+          mini_diff = false,
+          diagnostics = false,
+          inlay_hints = false,
+        },
+        win = { style = "zen" },
+      },
+      notifier = {
+        enabled = true,
+        timeout = 3000,
+      },
+      scratch = {
+        enabled = true,
       },
     },
   },

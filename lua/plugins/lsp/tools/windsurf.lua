@@ -6,27 +6,17 @@ return {
     cmd = 'Codeium',
     event = 'InsertEnter',
     build = ':Codeium Auth',
-    opts = function()
-      LazyVim.cmp.actions.ai_accept = function()
-        if require('codeium.virtual_text').get_current_completion_item() then
-          LazyVim.create_undo()
-          vim.api.nvim_input(require('codeium.virtual_text').accept())
-          return true
-        end
-      end
-
-      return {
-        enable_cmp_source = true,
-        virtual_text = {
-          enabled = true,
-          key_bindings = {
-            accept = '<Tab>',
-            next = '<M-]>',
-            prev = '<M-[>',
-          },
+    opts = {
+      enable_cmp_source = false,  -- Disabled because we use blink.cmp
+      virtual_text = {
+        enabled = true,
+        key_bindings = {
+          accept = '<Tab>',
+          next = '<M-]>',
+          prev = '<M-[>',
         },
-      }
-    end,
+      },
+    },
     config = function(_, opts)
       require('codeium').setup(opts)
     end,

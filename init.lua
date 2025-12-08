@@ -34,12 +34,20 @@ require('nixCatsUtils.lazyCat').setup(nixCats.pawsible { 'allPlugins', 'start', 
       ensure_installed = require('nixCatsUtils').lazyAdd({ 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' }, {}),
       auto_install = require('nixCatsUtils').lazyAdd(true, false),
     },
+    config = function()
+      -- Suppress Lazy update notifications for treesitter on Nix
+      if require('nixCatsUtils').isNixCats then
+        vim.g.lazy_nvim_treesitter_updated = true
+      end
+    end,
   },
   {
     'folke/lazydev.nvim',
     opts = {
       library = {
         { path = (nixCats.nixCatsPath or '') .. '/lua', words = { 'nixCats' } },
+        -- Add Nix library support for flake.nix completion
+        'nixpkgs',
       },
     },
   },

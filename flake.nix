@@ -95,7 +95,6 @@
           startupPlugins = with pkgs.vimPlugins; {
             general = [
               blink-cmp
-              blink-compat
               bufferline-nvim
               catppuccin-nvim
               colorful-menu-nvim
@@ -125,8 +124,7 @@
               render-markdown-nvim
               rustaceanvim
               snacks-nvim
-              telescope-fzf-native-nvim
-              telescope-nvim
+              fzf-lua
               todo-comments-nvim
               tokyonight-nvim
               trouble-nvim
