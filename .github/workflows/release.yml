@@ -127,7 +127,7 @@ jobs:
           ls -lh nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz
 
       - name: Upload to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: nixcats-${{ matrix.package }}-${{ matrix.os }}.tar.gz
           tag_name: ${{ github.ref_name }}
