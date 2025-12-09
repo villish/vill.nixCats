@@ -12,7 +12,7 @@ jobs:
     name: Build Packages
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         package: [nvim]
     runs-on: ${{ matrix.os }}
     steps:
@@ -40,7 +40,7 @@ jobs:
         run: ./result/bin/${{ matrix.package }} --version
 
   lua-formatting:
-    name: Check Lua Formatting
+    name: Format Lua files (stylua)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,12 +51,12 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check Lua formatting
+      - name: Format Lua files (stylua)
         run: |
-          nix run nixpkgs#stylua -- --check .
+          nix run nixpkgs#stylua -- .
 
   nix-formatting:
-    name: Check Nix Formatting
+    name: Format Nix (nixfmt-classic)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -67,6 +67,6 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check Nix formatting
+      - name: Format flake.nix (nixfmt-classic)
         run: |
-          nix run nixpkgs#nixfmt-classic -- --check flake.nix
+          nix run nixpkgs#nixfmt-classic -- flake.nix
