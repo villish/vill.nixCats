@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check Nix Flake
-        uses: DeterminateSystems/flake-checker-action@v10
+        uses: DeterminateSystems/flake-checker-action@v12
 
       - name: Install Nix
         uses: cachix/install-nix-action@v24
