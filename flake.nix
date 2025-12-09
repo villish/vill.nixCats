@@ -11,20 +11,12 @@
   };
 
   # see :help nixCats.flake.outputs
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixCats,
-      ...
-    }@inputs:
+  outputs = { self, nixpkgs, nixCats, ... }@inputs:
     let
       inherit (nixCats) utils;
       luaPath = ./.;
       forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-      extra_pkg_config = {
-        allowUnfree = true;
-      };
+      extra_pkg_config = { allowUnfree = true; };
 
       dependencyOverlays = # (import ./overlays inputs) ++
         [
@@ -47,16 +39,7 @@
       # and
       # :help nixCats.flake.outputs.categoryDefinitions.scheme
       categoryDefinitions =
-        {
-          pkgs,
-          settings,
-          categories,
-          extra,
-          name,
-          mkPlugin,
-          ...
-        }@packageDef:
-        {
+        { pkgs, settings, categories, extra, name, mkPlugin, ... }@packageDef: {
           # to define and use a new category, simply add a new list to a set here,
           # and later, you will include categoryname = true; in the set you
           # provide when you build the package using this builder function.
@@ -80,7 +63,9 @@
               nixd
               nixfmt-classic
               (pkgs.writeShellScriptBin "lazygit" ''
-                exec ${pkgs.lazygit}/bin/lazygit --use-config-file ${pkgs.writeText "lazygit_config.yml" ""} "$@"
+                exec ${pkgs.lazygit}/bin/lazygit --use-config-file ${
+                  pkgs.writeText "lazygit_config.yml" ""
+                } "$@"
               '')
               ripgrep
               rust-analyzer
@@ -166,9 +151,10 @@
           # shared libraries to be added to LD_LIBRARY_PATH
           # variable available to nvim runtime
           sharedLibraries = {
-            general = with pkgs; [
-              # libgit2
-            ];
+            general = with pkgs;
+              [
+                # libgit2
+              ];
           };
 
           # environmentVariables:
@@ -188,13 +174,9 @@
           # in your lua config via
           # vim.g.python3_host_prog
           # or run from nvim terminal via :!<packagename>-python3
-          python3.libraries = {
-            test = [ (_: [ ]) ];
-          };
+          python3.libraries = { test = [ (_: [ ]) ]; };
           # populates $LUA_PATH and $LUA_CPATH
-          extraLuaPackages = {
-            test = [ (_: [ ]) ];
-          };
+          extraLuaPackages = { test = [ (_: [ ]) ]; };
         };
 
       # And then build a package with specific categories from above here:
@@ -206,103 +188,80 @@
       packageDefinitions = {
         # These are the names of your packages
         # you can include as many as you wish.
-        nvim =
-          {
-            pkgs,
-            name,
-            mkPlugin,
-            ...
-          }:
-          {
-            # they contain a settings set defined above
-            # see :help nixCats.flake.outputs.settings
-            settings = {
-              suffix-path = true;
-              suffix-LD = true;
-              wrapRc = true;
-              # IMPORTANT:
-              # your alias may not conflict with your other packages.
-              # aliases = [ "vim" ];
-              # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
-              hosts.python3.enable = true;
-              hosts.node.enable = true;
-            };
-            # and a set of categories that you want
-            # (and other information to pass to lua)
-            categories = {
-              general = true;
-              test = false;
-            };
-            extra = { };
+        nvim = { pkgs, name, mkPlugin, ... }: {
+          # they contain a settings set defined above
+          # see :help nixCats.flake.outputs.settings
+          settings = {
+            suffix-path = true;
+            suffix-LD = true;
+            wrapRc = true;
+            # IMPORTANT:
+            # your alias may not conflict with your other packages.
+            # aliases = [ "vim" ];
+            # neovim-unwrapped = inputs.neovim-nightly-overlay.packages.${pkgs.system}.neovim;
+            hosts.python3.enable = true;
+            hosts.node.enable = true;
           };
+          # and a set of categories that you want
+          # (and other information to pass to lua)
+          categories = {
+            general = true;
+            test = false;
+          };
+          extra = { };
+        };
         # Portable package for releases - no Nix store dependencies
-        nvim-portable =
-          {
-            pkgs,
-            name,
-            mkPlugin,
-            ...
-          }:
-          {
-            settings = {
-              suffix-path = true;
-              suffix-LD = true;
-              wrapRc = false;
-              # Bundle the config directory into the package
-              configDirName = "nvim-config";
-              hosts.python3.enable = true;
-              hosts.node.enable = true;
-            };
-            categories = {
-              general = true;
-              test = false;
-            };
-            extra = { };
+        nvim-portable = { pkgs, name, mkPlugin, ... }: {
+          settings = {
+            suffix-path = true;
+            suffix-LD = true;
+            wrapRc = false;
+            # Bundle the config directory into the package
+            configDirName = "nvim-config";
+            hosts.python3.enable = true;
+            hosts.node.enable = true;
           };
+          categories = {
+            general = true;
+            test = false;
+          };
+          extra = { };
+        };
         # an extra test package with normal lua reload for fast edits
         # nix doesnt provide the config in this package, allowing you free rein to edit it.
         # then you can swap back to the normal pure package when done.
-        testnvim =
-          { pkgs, mkPlugin, ... }:
-          {
-            settings = {
-              suffix-path = true;
-              suffix-LD = true;
-              wrapRc = false;
-              unwrappedCfgPath = utils.mkLuaInline "os.getenv('HOME') .. '/some/path/to/your/config'";
-            };
-            categories = {
-              general = true;
-              test = false;
-            };
-            extra = { };
+        testnvim = { pkgs, mkPlugin, ... }: {
+          settings = {
+            suffix-path = true;
+            suffix-LD = true;
+            wrapRc = false;
+            unwrappedCfgPath = utils.mkLuaInline
+              "os.getenv('HOME') .. '/some/path/to/your/config'";
           };
+          categories = {
+            general = true;
+            test = false;
+          };
+          extra = { };
+        };
       };
       # In this section, the main thing you will need to do is change the default package name
       # to the name of the packageDefinitions entry you wish to use as the default.
       defaultPackageName = "nvim";
 
       # see :help nixCats.flake.outputs.exports
-    in
-    forEachSystem (
-      system:
+    in forEachSystem (system:
       let
         # the builder function that makes it all work
         nixCatsBuilder = utils.baseBuilder luaPath {
-          inherit
-            nixpkgs
-            system
-            dependencyOverlays
-            extra_pkg_config
-            ;
+          inherit nixpkgs system dependencyOverlays extra_pkg_config;
         } categoryDefinitions packageDefinitions;
         defaultPackage = nixCatsBuilder defaultPackageName;
         # this is just for using utils such as pkgs.mkShell
         # The one used to build neovim is resolved inside the builder
         # and is passed to our categoryDefinitions and packageDefinitions
         pkgs = import nixpkgs { inherit system; };
-      in
-      {
+      in {
         # these outputs will be wrapped with ${system} by utils.eachSystem
 
         # this will make a package out of each of the packageDefinitions defined above
@@ -320,38 +279,20 @@
           };
         };
 
-      }
-    )
-    // (
-      let
+      }) // (let
         # we also export a nixos module to allow reconfiguration from configuration.nix
         nixosModule = utils.mkNixosModules {
           moduleNamespace = [ defaultPackageName ];
-          inherit
-            defaultPackageName
-            dependencyOverlays
-            luaPath
-            categoryDefinitions
-            packageDefinitions
-            extra_pkg_config
-            nixpkgs
-            ;
+          inherit defaultPackageName dependencyOverlays luaPath
+            categoryDefinitions packageDefinitions extra_pkg_config nixpkgs;
         };
         # and the same for home manager
         homeModule = utils.mkHomeModules {
           moduleNamespace = [ defaultPackageName ];
-          inherit
-            defaultPackageName
-            dependencyOverlays
-            luaPath
-            categoryDefinitions
-            packageDefinitions
-            extra_pkg_config
-            nixpkgs
-            ;
+          inherit defaultPackageName dependencyOverlays luaPath
+            categoryDefinitions packageDefinitions extra_pkg_config nixpkgs;
         };
-      in
-      {
+      in {
 
         # these outputs will be NOT wrapped with ${system}
 
@@ -366,6 +307,5 @@
 
         inherit utils nixosModule homeModule;
         inherit (utils) templates;
-      }
-    );
+      });
 }

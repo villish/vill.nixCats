@@ -59,21 +59,21 @@ return {
         enabled = true,
         animate = {
           duration = { step = 15, total = 250 },
-          easing = "linear",
+          easing = 'linear',
         },
       },
       indent = {
         enabled = true,
-        char = "│",
+        char = '│',
         only_scope = false,
         only_current = false,
-        hl = "SnacksIndent",
+        hl = 'SnacksIndent',
       },
       scope = {
         enabled = true,
-        char = "│",
+        char = '│',
         underline = false,
-        hl = "SnacksScope",
+        hl = 'SnacksScope',
       },
       dim = {
         enabled = true,
@@ -92,7 +92,7 @@ return {
           diagnostics = false,
           inlay_hints = false,
         },
-        win = { style = "zen" },
+        win = { style = 'zen' },
       },
       notifier = {
         enabled = true,

@@ -7,7 +7,7 @@ return {
     event = 'InsertEnter',
     build = ':Codeium Auth',
     opts = {
-      enable_cmp_source = false,  -- Disabled because we use blink.cmp
+      enable_cmp_source = false, -- Disabled because we use blink.cmp
       virtual_text = {
         enabled = true,
         key_bindings = {

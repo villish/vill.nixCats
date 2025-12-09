@@ -1,7 +1,6 @@
 local uv = vim.loop
-local parser_install_dir = vim.fn.stdpath('data') .. '/treesitter'
-local treesitter_dir = nixCats.pawsible.allPlugins.start['nvim-treesitter.withAllGrammars']
-  or nixCats.pawsible.allPlugins.start['nvim-treesitter']
+local parser_install_dir = vim.fn.stdpath 'data' .. '/treesitter'
+local treesitter_dir = nixCats.pawsible.allPlugins.start['nvim-treesitter.withAllGrammars'] or nixCats.pawsible.allPlugins.start['nvim-treesitter']
 
 local function stat(path)
   local ok, result = pcall(uv.fs_lstat, path)
@@ -74,4 +73,3 @@ return {
     end,
   }, treesitter_dir and { dir = treesitter_dir } or {}),
 }
-

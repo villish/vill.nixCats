@@ -13,21 +13,19 @@ return {
 
       local default = opts.sources.default
       if type(default) == 'table' then
-        if not vim.tbl_contains(default, 'codeium') then table.insert(default, 'codeium') end
+        if not vim.tbl_contains(default, 'codeium') then
+          table.insert(default, 'codeium')
+        end
       else
         opts.sources.default = { 'lsp', 'path', 'snippets', 'buffer', 'codeium' }
       end
 
       opts.sources.providers = opts.sources.providers or {}
-      opts.sources.providers.codeium = vim.tbl_deep_extend(
-        'force',
-        {
-          name = 'Codeium',
-          module = 'codeium.blink',
-          async = true,
-        },
-        opts.sources.providers.codeium or {}
-      )
+      opts.sources.providers.codeium = vim.tbl_deep_extend('force', {
+        name = 'Codeium',
+        module = 'codeium.blink',
+        async = true,
+      }, opts.sources.providers.codeium or {})
 
       opts.sources.compat = nil
 
@@ -45,7 +43,6 @@ return {
           return {}
         end,
       }
-
     end,
   },
 }

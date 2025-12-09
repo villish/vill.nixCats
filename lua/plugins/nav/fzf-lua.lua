@@ -16,10 +16,10 @@ return {
       actions = {
         files = {
           ['<leader>h'] = function(selected, opts)
-            require('fzf-lua').files({
+            require('fzf-lua').files {
               cwd = selected[1],
               hidden = true,
-            })
+            }
           end,
         },
       },
